@@ -289,11 +289,11 @@ def save_calendar(calendar):
     >>> save_calendar(calendar)
     True
 
-
     """
+
     my_output = ""
     for date in list(calendar.keys()):
-        my_day = ""
+        my_day: str = ""
         tasks = list(calendar[date])
         my_string = ""
         for task in tasks:
@@ -303,7 +303,7 @@ def save_calendar(calendar):
         my_output += my_day
     try:
         f = open("calendar.txt", "w")
-        f.write(my_output + "\n")
+        f.write(my_output)
     except:
         return False
     else:
