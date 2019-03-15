@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 '''
 
@@ -104,6 +105,8 @@ def command_add(date, start_time, end_time, title, calendar):
     return: boolean of whether the even was successfully added
 
     >>> calendar = {}
+    >>> command_add("", 11, 12, "Python class", calendar)
+    True
     >>> command_add("2018-02-28", 11, 12, "Python class", calendar)
     True
     >>> calendar == {"2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}]}
@@ -128,6 +131,10 @@ def command_add(date, start_time, end_time, title, calendar):
 
     # YOUR CODE GOES HERE
     # command_add(date, start_time, end_time, title, calendar)
+    # calendar == {"2018-03-11": [{"start": 14, "end": 16, "title": "CSCA08 test 2"}], \
+    #             "2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}]}
+    if len(date) == 0:
+        date = datetime.now().strftime("%Y-%m-%d")
     if is_calendar_date(date) and 24 > start_time > 0 and 0 < end_time < 24 and start_time <= end_time and len(title) !=  0:
         calendar[date] = [{"start": start_time, "end": end_time, "title": title}]
         return True
