@@ -275,20 +275,18 @@ def save_calendar(calendar):
     return: True if the calendar was saved.
 
 
-    >>> calendar = {"2018-03-13": \
-                                [\
-                                 {"start": 15, "end": 16, "title":  "Have fun2"}\
-                                 ],\
-                    "2019-01-11": \
+    >>> calendar = {"2019-01-11": \
                                 [\
                                 {"start": 3, "end": 4, "title": "Have fun3"}, \
-                                {"start": 5, "end": 6, "title":  "Have fun4"}\
+                                {"start": 5, "end": 6, "title": "Have fun4"}, \
+                                {"start": 7, "end": 8, "title": "Have fun5"}\
                                  ],\
                     "2018-03-11": \
                                 [\
-                                 {"start": 14, "end": 16, "title": "CSCA08 test 2"}\
+                                 {"start": 10, "end": 11, "title": "test 2"},\
+                                 {"start": 12, "end": 13, "title": "test 3"}\
                                  ],\
-                    "2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}]\
+                    "2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}],\
                     }
     >>> save_calendar(calendar)
     True
@@ -310,7 +308,7 @@ def save_calendar(calendar):
     except:
         return False
     else:
-        return True
+        return my_output
 
 
 def load_calendar():
@@ -324,11 +322,42 @@ def load_calendar():
     >>> load_calendar()
     True
 
+    calendar = {
+        "2019-01-11": \
+            [ \
+                {"start": 3, "end": 4, "title": "Have fun3"}, \
+                {"start": 5, "end": 6, "title": "Have fun4"} \
+                ], \
+        "2018-03-11": \
+            [ \
+                {"start": 14, "end": 16, "title": "CSCA08 test 2"} \
+                ], \
+        "2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}] \
+        }
+
     '''
 
-    pass
+    f = open("calendar.txt", "r")
+    days = f.read().strip().split("\n")
+    calendar = {}
+    for day in days:
+        date = day.split(":")[0]
+        str_tasks = day.split(":")[1]
+        list_task = str_tasks.split("\t")
+        calendar[date] = []
+        list_tasks_for_dict =[]
+        for str_task in list_task:
+            list_time_title = str_task.split()
+            str_time = list_time_title.pop(0)
+            int_start = int(str_time.split("-")[0])
+            int_end = int(str_time.split("-")[1])
+            str_title = ""
+            for x in list_time_title:
+                str_title += x + " ".rstrip()
+            list_tasks_for_dict.append({"start": int_start, "end": int_end, "title": str_title})
 
-
+        calendar[date] = list_tasks_for_dict
+    return calendar
 # -----------------------------------------------------------------------------
 # Functions dealing with parsing commands
 # -----------------------------------------------------------------------------
