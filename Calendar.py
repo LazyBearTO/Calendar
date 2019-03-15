@@ -248,7 +248,6 @@ def save_calendar(calendar):
     Example: The following calendar...
 
 
-
         2018-03-13 : 
                 start : 13:00,
                 end : 13:00,
@@ -284,11 +283,16 @@ def save_calendar(calendar):
                                 [\
                                 {"start": 3, "end": 4, "title": "Have fun3"}, \
                                  {"start": 5, "end": 6, "title":  "Have fun4"}\
-                                 ]\
+                                 ],\
+                    "2018-03-11": \
+                                [{"start": 14, "end": 16, "title": "CSCA08 test 2"}]\
                     }
     >>> save_calendar(calendar)
     True
-
+    # calendar = {"2018-03-13": [{"start": 13, "end": 13, "title": "Have fun"},
+    #                            {"start": 14, "end": 15, "title": "Have fun2"}],
+    #             "2018-03-11": [{"start": 14, "end": 16, "title": "CSCA08 test 2"}],
+    #             "2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}]}
     """
 
     my_output = ""
