@@ -1,5 +1,5 @@
 import os
-import json
+
 '''
 
 IMPORTANT NOTE: Do NOT change any of the function names or their signatures
@@ -274,30 +274,40 @@ def save_calendar(calendar):
 
     calendar: dictionary containing a calendar
     return: True if the calendar was saved.
-    calender = {"2018-03-13": [{"start": 13, "end": 13, "title": "Have fun"},{"start": 14, "end": 15, "title": "Have fun2"}] }
 
 
-    >>> calendar = {"2018-03-13": [{"start": 13, "end": 13, "title": "Have fun"}, {"start": 14, "end": 15, "title": "Have fun2"}], "2018-03-11": [{"start": 14, "end": 16, "title": "CSCA08 test 2"}], "2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}]}
+    >>> calendar = {"2018-03-13": \
+                                [\
+                                 {"start": 15, "end": 16, "title":  "Have fun2"}\
+                                 ],\
+                    "2019-01-11": \
+                                [\
+                                {"start": 3, "end": 4, "title": "Have fun3"}, \
+                                 {"start": 5, "end": 6, "title":  "Have fun4"}\
+                                 ]\
+                    }
     >>> save_calendar(calendar)
     True
+
+
     """
-
-    # calendar = {"2018-03-13": [{"start": 13, "end": 13, "title": "Have fun"},
-    #                            {"start": 14, "end": 15, "title": "Have fun2"}],
-    #             "2018-03-11": [{"start": 14, "end": 16, "title": "CSCA08 test 2"}],
-    #             "2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}]}
-    # json_input = '{"2018-03-13": [{"start": "13:00", "end": "14:00"}, ' \
-    #              '{"start": "14:00", "end": "15:00"} ] } '
-    # calender = json.loads(json_input)
-    # for x in calender:
-    #     print(calender)
-    #     print(calender[x])
-    json_data = json.dumps(calendar)
-
-    f = open("calendar.txt", "w")
-    f.write(json_data)
-
-    return True
+    my_output = ""
+    for date in list(calendar.keys()):
+        my_day = ""
+        tasks = list(calendar[date])
+        my_string = ""
+        for task in tasks:
+            my_string += str(task['start']) + "-" + str(task['end']) + " " + task['title']
+            my_string += '\t'
+        my_day = date + ":" + my_string.rstrip("\t.") + "\n"
+        my_output += my_day
+    try:
+        f = open("calendar.txt", "w")
+        f.write(my_output + "\n")
+    except:
+        return False
+    else:
+        return True
 
 
 def load_calendar():
