@@ -127,9 +127,12 @@ def command_add(date, start_time, end_time, title, calendar):
     """
 
     # YOUR CODE GOES HERE
-
-    pass
-
+    # command_add(date, start_time, end_time, title, calendar)
+    if is_calendar_date(date) and 24 > start_time > 0 and 0 < end_time < 24 and start_time <= end_time and len(title) !=  0:
+        calendar[date] = [{"start": start_time, "end": end_time, "title": title}]
+        return True
+    else:
+        return False
 
 def command_show(calendar):
     """
@@ -355,9 +358,10 @@ def load_calendar():
             for x in list_time_title:
                 str_title += x + " ".rstrip()
             list_tasks_for_dict.append({"start": int_start, "end": int_end, "title": str_title})
-
         calendar[date] = list_tasks_for_dict
     return calendar
+
+
 # -----------------------------------------------------------------------------
 # Functions dealing with parsing commands
 # -----------------------------------------------------------------------------
