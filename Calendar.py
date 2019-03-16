@@ -189,15 +189,22 @@ def command_show(calendar):
     od = collections.OrderedDict(sorted(calendar.items(), reverse=True))
     for dict_day in od:
         list_tasks = od[dict_day]  # Todo sort the list_tasks
-        str_return += "\n" + dict_day + " :"
+        str_return += "\n" + dict_day + " : "
+        if len(list_tasks) > 1:
+            def myFunc(e):
+                return e['start']
+            list_tasks.sort(reverse=False, key=myFunc)
         for dict_task in list_tasks:
             start = dict_task["start"]
             end = dict_task["end"]
             title = dict_task["title"]
-            str_return += " \n    start : " +\
-                          datetime.datetime(2018, 6, 1, start).strftime("%H:%M")\
-                          + ",\n    end : " + str(end) + ":00,\n" + \
+            str_return += "\n    start : " +\
+                          datetime.datetime(2018, 6, 1, start).strftime("%H:%M") + \
+                          ",\n    end : " +\
+                          datetime.datetime(2018, 6, 1, end).strftime("%H:%M") + ",\n" + \
                           "    title : " + title
+            if len(list_tasks) > 1 and dict_task != list_tasks[-1]:  # only middle has "/n" appended
+                str_return += "\n"
     return str_return
 
 
