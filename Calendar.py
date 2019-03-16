@@ -1,5 +1,6 @@
 import os
-from datetime import datetime
+import collections
+import datetime
 
 '''
 
@@ -106,10 +107,10 @@ def command_add(date, start_time, end_time, title, calendar):
 
     >>> calendar = {}
     >>> command_add(" ", 11, 12, "Python class", calendar)
-    {'2019-03-16': [{'start': 11, 'end': 12, 'title': 'Python class'}]}
+    True
 
     >>> command_add(" ", 13, 14, "CCNA class", calendar)
-    {'2019-03-16': [{'start': 11, 'end': 12, 'title': 'Python class'}, {'start': 13, 'end': 14, 'title': 'CCNA class'}]}
+    True
 
     >>> calendar.clear()
     >>> command_add("2018-02-28", 11, 12, "Python class", calendar)
@@ -157,7 +158,6 @@ def command_add(date, start_time, end_time, title, calendar):
         return False
 
 
-
 def command_show(calendar):
     """
     (dict) -> str
@@ -186,15 +186,18 @@ def command_show(calendar):
     '\\n2018-05-06 : \\n    start : 19:00,\\n    end : 23:00,\\n    title : Sid's birthday\\n2018-02-10 : \\n    start : 12:00,\\n    end : 23:00,\\n    title : Change oil in blue car\\n\\n    start : 20:00,\\n    end : 22:00,\\n    title : dinner with Jane\\n2018-01-15 : \\n    start : 08:00,\\n    end : 09:00,\\n    title : lunch with sid\\n\\n    start : 11:00,\\n    end : 13:00,\\n    title : Eye doctor\\n2017-12-22 : \\n    start : 05:00,\\n    end : 08:00,\\n    title : Fix tree near front walkway\\n\\n    start : 13:00,\\n    end : 15:00,\\n    title : Get salad stuff'
     """
     str_return = ""
-    for dict_day in calendar:
-        list_tasks = calendar[dict_day]
+    od = collections.OrderedDict(sorted(calendar.items(), reverse=True))
+    for dict_day in od:
+        list_tasks = od[dict_day]  # Todo sort the list_tasks
+        str_return += "\n" + dict_day + " :"
         for dict_task in list_tasks:
             start = dict_task["start"]
             end = dict_task["end"]
             title = dict_task["title"]
-            str_return += "\n" + dict_day + " : \n    start : " + str(start) + ",\n    end : " + str(end) + ",\n" + \
-                          "    title : " + title + "\n"
-
+            str_return += " \n    start : " +\
+                          datetime.datetime(2018, 6, 1, start).strftime("%H:%M")\
+                          + ",\n    end : " + str(end) + ":00,\n" + \
+                          "    title : " + title
     return str_return
 
 
