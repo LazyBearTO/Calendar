@@ -147,7 +147,7 @@ def command_add(date, start_time, end_time, title, calendar):
     #             "2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}]}
 
     if len(date.strip()) == 0:
-        date = datetime.now().strftime("%Y-%m-%d")
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
     if is_calendar_date(date) and 24 > start_time > 0 and 0 < end_time < 24 and start_time <= end_time and len(title) !=  0:
         if date not in calendar:
             calendar[date] = [{"start": start_time, "end": end_time, "title": title}]
@@ -191,9 +191,9 @@ def command_show(calendar):
         list_tasks = od[dict_day]  # Todo sort the list_tasks
         str_return += "\n" + dict_day + " : "
         if len(list_tasks) > 1:
-            def myFunc(e):
+            def my_func(e):
                 return e['start']
-            list_tasks.sort(reverse=False, key=myFunc)
+            list_tasks.sort(reverse=False, key=my_func)
         for dict_task in list_tasks:
             start = dict_task["start"]
             end = dict_task["end"]
