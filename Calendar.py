@@ -106,7 +106,10 @@ def command_add(date, start_time, end_time, title, calendar):
 
     >>> calendar = {}
     >>> command_add(" ", 11, 12, "Python class", calendar)
-    True
+    {'2019-03-16': [{'start': 11, 'end': 12, 'title': 'Python class'}]}
+
+    >>> command_add(" ", 13, 14, "CCNA class", calendar)
+    {'2019-03-16': [{'start': 11, 'end': 12, 'title': 'Python class'}, {'start': 13, 'end': 14, 'title': 'CCNA class'}]}
 
     >>> calendar.clear()
     >>> command_add("2018-02-28", 11, 12, "Python class", calendar)
@@ -141,13 +144,18 @@ def command_add(date, start_time, end_time, title, calendar):
     # command_add(date, start_time, end_time, title, calendar)
     # calendar == {"2018-03-11": [{"start": 14, "end": 16, "title": "CSCA08 test 2"}], \
     #             "2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}]}
+
     if len(date.strip()) == 0:
         date = datetime.now().strftime("%Y-%m-%d")
     if is_calendar_date(date) and 24 > start_time > 0 and 0 < end_time < 24 and start_time <= end_time and len(title) !=  0:
-        calendar[date] = [{"start": start_time, "end": end_time, "title": title}]
+        if date not in calendar:
+            calendar[date] = [{"start": start_time, "end": end_time, "title": title}]
+        else:
+            calendar[date].append({"start": start_time, "end": end_time, "title": title})
+        return True
     else:
         return False
-    return True
+
 
 
 def command_show(calendar):
@@ -177,8 +185,17 @@ def command_show(calendar):
     >>> command_show(calendar)
     '\\n2018-05-06 : \\n    start : 19:00,\\n    end : 23:00,\\n    title : Sid's birthday\\n2018-02-10 : \\n    start : 12:00,\\n    end : 23:00,\\n    title : Change oil in blue car\\n\\n    start : 20:00,\\n    end : 22:00,\\n    title : dinner with Jane\\n2018-01-15 : \\n    start : 08:00,\\n    end : 09:00,\\n    title : lunch with sid\\n\\n    start : 11:00,\\n    end : 13:00,\\n    title : Eye doctor\\n2017-12-22 : \\n    start : 05:00,\\n    end : 08:00,\\n    title : Fix tree near front walkway\\n\\n    start : 13:00,\\n    end : 15:00,\\n    title : Get salad stuff'
     """
+    str_return = ""
+    for dict_day in calendar:
+        list_tasks = calendar[dict_day]
+        for dict_task in list_tasks:
+            start = dict_task["start"]
+            end = dict_task["end"]
+            title = dict_task["title"]
+            str_return += "\n" + dict_day + " : \n    start : " + str(start) + ",\n    end : " + str(end) + ",\n" + \
+                          "    title : " + title + "\n"
 
-    pass
+    return str_return
 
 
 def command_delete(date, start_time, calendar):
@@ -324,10 +341,10 @@ def save_calendar(calendar):
     >>> save_calendar(calendar)
     True
     """
-
+    if len(calendar) == 0:
+        return False
     my_output = ""
     for date in list(calendar.keys()):
-        my_day: str = ""
         tasks = list(calendar[date])
         my_string = ""
         for task in tasks:
@@ -341,7 +358,7 @@ def save_calendar(calendar):
     except:
         return False
     else:
-        return my_output
+        return True
 
 
 def load_calendar():
@@ -378,7 +395,7 @@ def load_calendar():
         str_tasks = day.split(":")[1]
         list_task = str_tasks.split("\t")
         calendar[date] = []
-        list_tasks_for_dict =[]
+        list_tasks_for_dict = []
         for str_task in list_task:
             list_time_title = str_task.split()
             str_time = list_time_title.pop(0)
