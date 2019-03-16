@@ -234,8 +234,11 @@ def command_delete(date, start_time, calendar):
     """
 
     # YOUR CODE GOES HERE
-    pass
 
+    if date in calendar:
+        return calendar.keys
+    else:
+        return date + " is not a date in the calendar"
 
 # -----------------------------------------------------------------------------
 # Functions dealing with calendar persistence
