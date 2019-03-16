@@ -205,9 +205,6 @@ def command_delete(date, start_time, calendar):
     >>> calendar == {"2018-03-11": [{"start": 14, "end": 16, "title": "CSCA08 test 2"}], \
     "2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}]}
     True
-    >>> calendar == {"2018-03-11": [{"start": 14, "end": 16, "title": "CSCA08 test 2"}], \
-    "2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}]}
-    True
     >>> command_add("2018-03-13", 13, 13, "Have fun", calendar)
     True
     >>> calendar == {"2018-03-13": [{"start": 13, "end": 13, "title": "Have fun"}], "2018-03-11": \
@@ -234,9 +231,24 @@ def command_delete(date, start_time, calendar):
     """
 
     # YOUR CODE GOES HERE
-
     if date in calendar:
-        return calendar.keys
+        list_task = calendar.get(date)
+        for x in list_task:
+            if start_time != x.get("start"):
+                # if NOT find the task in start_time
+                # print(start_time != x.get("start"))
+                return ("There is no event with start time of " + str(start_time) +
+                        " on date " + date + " in the calendar")
+            else:
+                # if found the task in start_time
+                # delete dict_task
+                list_task.pop()
+                # no task on date, delete calendar[date]
+                if len(list_task) == 0:
+                    calendar.pop(date)
+                    return True
+                else:
+                    return False
     else:
         return date + " is not a date in the calendar"
 
