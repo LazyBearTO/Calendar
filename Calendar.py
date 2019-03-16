@@ -227,7 +227,6 @@ def command_delete(date, start_time, calendar):
     True
     >>> calendar == {}
     True
-
     """
 
     # YOUR CODE GOES HERE
