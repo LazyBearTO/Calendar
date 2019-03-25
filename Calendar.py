@@ -148,11 +148,13 @@ def command_add(date, start_time, end_time, title, calendar):
 
     if len(date.strip()) == 0:
         date = datetime.datetime.now().strftime("%Y-%m-%d")
-    if is_calendar_date(date) and 24 > start_time > 0 and 0 < end_time < 24 and start_time <= end_time and len(title) !=  0:
+    if is_calendar_date(date) and 0 <= start_time <= 24 and 0 <= end_time <= 24\
+            and start_time <= end_time and len(title) != 0:
         if date not in calendar:
             calendar[date] = [{"start": start_time, "end": end_time, "title": title}]
         else:
             calendar[date].append({"start": start_time, "end": end_time, "title": title})
+        save_calendar(calendar)
         return True
     else:
         return False
@@ -188,7 +190,7 @@ def command_show(calendar):
     str_return = ""
     od = collections.OrderedDict(sorted(calendar.items(), reverse=True))
     for dict_day in od:
-        list_tasks = od[dict_day]  # Todo sort the list_tasks
+        list_tasks = od[dict_day]
         str_return += "\n" + dict_day + " : "
         if len(list_tasks) > 1:
             def my_func(e):
@@ -203,7 +205,7 @@ def command_show(calendar):
                           ",\n    end : " +\
                           datetime.datetime(2018, 6, 1, end).strftime("%H:%M") + ",\n" + \
                           "    title : " + title
-            if len(list_tasks) > 1 and dict_task != list_tasks[-1]:  # only middle has "/n" appended
+            if len(list_tasks) > 1 and dict_task != list_tasks[-1]:  # only middle change line appended
                 str_return += "\n"
     return str_return
 
@@ -259,22 +261,17 @@ def command_delete(date, start_time, calendar):
     # YOUR CODE GOES HERE
     if date in calendar:
         list_task = calendar.get(date)
-        for x in list_task:
-            if start_time != x.get("start"):
-                # if NOT find the task in start_time
-                # print(start_time != x.get("start"))
-                return ("There is no event with start time of " + str(start_time) +
-                        " on date " + date + " in the calendar")
-            else:
+        for dict_task in list_task:
+            if start_time == dict_task.get("start"):
                 # if found the task in start_time
                 # delete dict_task
-                list_task.pop()
+                list_task.remove(dict_task)
+                save_calendar(calendar)
                 # no task on date, delete calendar[date]
                 if len(list_task) == 0:
                     calendar.pop(date)
-                    return True
-                else:
-                    return False
+            else:
+                return date + ": " + start_time + "not found in calendar"
     else:
         return date + " is not a date in the calendar"
 
@@ -664,7 +661,7 @@ def parse_command(line):
             result.append("error")
             result.append("not a valid calendar date")
 
-    if result[0] == "delete":
+    if result[0] == "delete" or result[0] == "del":
         if len(result) == 1:
             result.clear()
             result.append("error")
