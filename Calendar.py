@@ -202,7 +202,7 @@ def command_show(calendar):
             title = dict_task["title"]
             str_return += "\n    start : " +\
                           datetime.datetime(2018, 6, 1, start).strftime("%H:%M") + \
-                          ",\n    end : " +\
+                          ",\n    end   : " +\
                           datetime.datetime(2018, 6, 1, end).strftime("%H:%M") + ",\n" + \
                           "    title : " + title
             if len(list_tasks) > 1 and dict_task != list_tasks[-1]:  # only middle change line appended
@@ -261,17 +261,20 @@ def command_delete(date, start_time, calendar):
     # YOUR CODE GOES HERE
     if date in calendar:
         list_task = calendar.get(date)
+        found = False
         for dict_task in list_task:
-            if start_time == dict_task.get("start"):
-                # if found the task in start_time
-                # delete dict_task
+            if start_time == dict_task["start"]:
+                found = True
                 list_task.remove(dict_task)
-                save_calendar(calendar)
-                # no task on date, delete calendar[date]
                 if len(list_task) == 0:
                     calendar.pop(date)
-            else:
-                return date + ": " + start_time + "not found in calendar"
+                    #dict_task.pop()
+                save_calendar(calendar)
+                return found
+
+        if not found:
+            return date + " : " + str(start_time) + " : is not a date in the calendar"
+
     else:
         return date + " is not a date in the calendar"
 
@@ -666,22 +669,24 @@ def parse_command(line):
             result.clear()
             result.append("error")
             result.append("delete DATE START_TIME")
-        else:
-            if len(result) == 2:
-                if not is_calendar_date(result[1]):
-                    result.clear()
-                    result.append("error")
-                    result.append("delete DATE START_TIME")
-            if len(result) == 3:
-                if not is_calendar_date(result[1]):
-                    result.clear()
-                    result.append("error")
-                    result.append("not a valid calendar date")
-            if len(result) == 3:
-                if not is_natural_number(result[2]):
-                    result.clear()
-                    result.append("error")
-                    result.append("not a valid event start time")
+        if len(result) == 2:
+            if not is_calendar_date(result[1]):
+                result.clear()
+                result.append("error")
+                result.append("delete DATE START_TIME")
+        if len(result) == 3:
+            if not is_calendar_date(result[1]):
+                result.clear()
+                result.append("error")
+                result.append("not a valid calendar date")
+        if len(result) == 3:
+            if not is_natural_number(result[2]):
+                result.clear()
+                result.append("error")
+                result.append("not a valid event start time")
+            else:
+                result[2] = int(result[2])
+
     return result
 
 

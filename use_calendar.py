@@ -111,22 +111,22 @@ def user_interface():
             break
         print("You have entered the command", answer)
 
+        if "help" in answer:
+            print(calendar.command_help())
         if "show" == answer[0]:
-            print(answer)
             print(calendar.command_show(dict_calendar))
-
         if "add" in answer[0]:
             str_date = answer[1]
             start_time = answer[2]
             end_time = answer[3]
             title = answer[4]
-            calendar.command_add(str_date, start_time, end_time, title, dict_calendar)
+            print(calendar.command_add(str_date, start_time, end_time, title, dict_calendar))
 
         if "del" == answer[0] or "delete" == answer[0]:
             print(answer)
             str_date = answer[1]
             start_time = int(answer[2])
-            calendar.command_delete(str_date, start_time, dict_calendar)
+            print(calendar.command_delete(str_date, start_time, dict_calendar))
 
 
 if __name__ == "__main__":
