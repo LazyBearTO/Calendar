@@ -123,7 +123,6 @@ def user_interface():
             print(calendar.command_add(str_date, start_time, end_time, title, dict_calendar))
 
         if "del" == answer[0] or "delete" == answer[0]:
-            print(answer)
             str_date = answer[1]
             start_time = int(answer[2])
             print(calendar.command_delete(str_date, start_time, dict_calendar))

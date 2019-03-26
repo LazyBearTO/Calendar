@@ -145,7 +145,8 @@ def command_add(date, start_time, end_time, title, calendar):
     # command_add(date, start_time, end_time, title, calendar)
     # calendar == {"2018-03-11": [{"start": 14, "end": 16, "title": "CSCA08 test 2"}], \
     #             "2018-02-28": [{"start": 11, "end": 12, "title": "Python class"}]}
-
+    # if not type(start_time) == "int" or not type(end_time) == "int":
+    #     return False
     if len(date.strip()) == 0:
         date = datetime.datetime.now().strftime("%Y-%m-%d")
     if is_calendar_date(date) and 0 <= start_time <= 24 and 0 <= end_time <= 24\
@@ -185,7 +186,7 @@ def command_show(calendar):
     >>> command_add("2018-05-06", 19, 23, "Sid's birthday", calendar)
     True
     >>> command_show(calendar)
-    '\\n2018-05-06 : \\n    start : 19:00,\\n    end : 23:00,\\n    title : Sid's birthday\\n2018-02-10 : \\n    start : 12:00,\\n    end : 23:00,\\n    title : Change oil in blue car\\n\\n    start : 20:00,\\n    end : 22:00,\\n    title : dinner with Jane\\n2018-01-15 : \\n    start : 08:00,\\n    end : 09:00,\\n    title : lunch with sid\\n\\n    start : 11:00,\\n    end : 13:00,\\n    title : Eye doctor\\n2017-12-22 : \\n    start : 05:00,\\n    end : 08:00,\\n    title : Fix tree near front walkway\\n\\n    start : 13:00,\\n    end : 15:00,\\n    title : Get salad stuff'
+    \"\\n2018-05-06 : \\n    start : 19:00,\\n    end : 23:00,\\n    title : Sid's birthday\\n2018-02-10 : \\n    start : 12:00,\\n    end : 23:00,\\n    title : Change oil in blue car\\n\\n    start : 20:00,\\n    end : 22:00,\\n    title : dinner with Jane\\n2018-01-15 : \\n    start : 08:00,\\n    end : 09:00,\\n    title : lunch with sid\\n\\n    start : 11:00,\\n    end : 13:00,\\n    title : Eye doctor\\n2017-12-22 : \\n    start : 05:00,\\n    end : 08:00,\\n    title : Fix tree near front walkway\\n\\n    start : 13:00,\\n    end : 15:00,\\n    title : Get salad stuff\"
     """
     str_return = ""
     od = collections.OrderedDict(sorted(calendar.items(), reverse=True))
@@ -265,16 +266,14 @@ def command_delete(date, start_time, calendar):
         for dict_task in list_task:
             if start_time == dict_task["start"]:
                 found = True
-                list_task.remove(dict_task)
+                list_task.remove(dict_task)  # delete task from in that day
                 if len(list_task) == 0:
-                    calendar.pop(date)
-                    #dict_task.pop()
-                save_calendar(calendar)
+                    calendar.pop(date)  # delete the date which has no task
+                if save_calendar(calendar):
+                    return True
                 return found
-
         if not found:
-            return date + " : " + str(start_time) + " : is not a date in the calendar"
-
+            return date + " :  There is not a task at " + str(start_time)
     else:
         return date + " is not a date in the calendar"
 
@@ -351,9 +350,12 @@ def save_calendar(calendar):
     >>> save_calendar(calendar)
     True
     """
-    if len(calendar) == 0:
-        return False
     my_output = ""
+
+    if len(calendar) == 0:
+        f = open("calendar.txt", "w")
+        f.write(my_output)
+        return True
     for date in list(calendar.keys()):
         tasks = list(calendar[date])
         my_string = ""
@@ -396,26 +398,29 @@ def load_calendar():
         }
 
     '''
-
+    calendar = {}
     f = open("calendar.txt", "r")
     days = f.read().strip().split("\n")
-    calendar = {}
-    for day in days:
-        date = day.split(":")[0]
-        str_tasks = day.split(":")[1]
-        list_task = str_tasks.split("\t")
-        calendar[date] = []
-        list_tasks_for_dict = []
-        for str_task in list_task:
-            list_time_title = str_task.split()
-            str_time = list_time_title.pop(0)
-            int_start = int(str_time.split("-")[0])
-            int_end = int(str_time.split("-")[1])
-            str_title = ""
-            for x in list_time_title:
-                str_title += x + " ".rstrip()
-            list_tasks_for_dict.append({"start": int_start, "end": int_end, "title": str_title})
-        calendar[date] = list_tasks_for_dict
+    if days[0] == "":
+         print('Calendar is empty')
+         return calendar
+    else:
+        for day in days:
+            date = day.split(":")[0]
+            str_tasks = day.split(":")[1]
+            list_task = str_tasks.split("\t")
+            calendar[date] = []
+            list_tasks_for_dict = []
+            for str_task in list_task:
+                list_time_title = str_task.split()
+                str_time = list_time_title.pop(0)
+                int_start = int(str_time.split("-")[0])
+                int_end = int(str_time.split("-")[1])
+                str_title = ""
+                for x in list_time_title:
+                    str_title += x + " ".rstrip()
+                list_tasks_for_dict.append({"start": int_start, "end": int_end, "title": str_title})
+            calendar[date] = list_tasks_for_dict
     return calendar
 
 
@@ -640,11 +645,16 @@ def parse_command(line):
         result.clear()
         result.append("help")
 
+    if len(result) == 4 and result[0] == "add":
+        result.clear()
+        result.append("error")
+        result.append("add DATE START_TIME END_TIME DETAILS")
+
     if len(result) > 4 and result[0] == "add":
         base = []
         temp_str = ""
         base.append(result[0])
-        if is_calendar_date(result[1]):
+        if is_calendar_date(result[1]) and is_natural_number(result[2]) and is_natural_number(result[3]):
             base.append(result[1])
             for x in range(0, len(result)):
                 if 1 < x < 4:
@@ -662,7 +672,7 @@ def parse_command(line):
         else:
             result.clear()
             result.append("error")
-            result.append("not a valid calendar date")
+            result.append("not a valid calendar date or time")
 
     if result[0] == "delete" or result[0] == "del":
         if len(result) == 1:
@@ -670,10 +680,9 @@ def parse_command(line):
             result.append("error")
             result.append("delete DATE START_TIME")
         if len(result) == 2:
-            if not is_calendar_date(result[1]):
-                result.clear()
-                result.append("error")
-                result.append("delete DATE START_TIME")
+            result.clear()
+            result.append("error")
+            result.append("delete DATE START_TIME")
         if len(result) == 3:
             if not is_calendar_date(result[1]):
                 result.clear()
