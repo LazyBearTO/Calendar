@@ -107,7 +107,7 @@ def user_interface():
     while True:
         dict_calendar = calendar.load_calendar()
         answer = calendar.parse_command(input("input your command: ").strip().lower())
-        # print(answer)
+        print(answer)
         if "quit" == answer[0]:
             break
         if "help" == answer[0]:
@@ -119,11 +119,14 @@ def user_interface():
             start_time = answer[2]
             end_time = answer[3]
             title = answer[4]
-            print(calendar.command_add(str_date, start_time, end_time, title, dict_calendar))
+            if calendar.command_add(str_date, start_time, end_time, title, dict_calendar):
+                print("added")
+            else:
+                print("no added")
 
         if "del" == answer[0] or "delete" == answer[0]:
             str_date = answer[1]
-            start_time = int(answer[2])
+            start_time = answer[2]
             result = calendar.command_delete(str_date, start_time, dict_calendar)
             if result == "True":
                 print("deleted")
