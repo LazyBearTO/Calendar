@@ -142,6 +142,8 @@ def command_add(date, start_time, end_time, title, calendar):
     # YOUR CODE GOES HERE
     if start_time > end_time:
         return False
+    if start_time not in range(0, 23) or end_time not in range(0, 23):
+        return False
     if calendar:
         # if not empty
         if len(date.strip()) == 0:
