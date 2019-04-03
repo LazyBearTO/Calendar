@@ -417,6 +417,7 @@ def load_calendar():
     if not f.read(1):
         # empty txt
         f.seek(0)
+        f.close
         return calendar
     else:
         f.seek(0)
@@ -437,6 +438,8 @@ def load_calendar():
                     str_title += x + " "
                 list_tasks_for_dict.append({"start": int_start, "end": int_end, "title": str_title.rstrip()})
             calendar[date] = list_tasks_for_dict
+        f.close
+
     return calendar
 
 
