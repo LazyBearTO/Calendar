@@ -1,5 +1,7 @@
 import datetime
+import os
 
+FILENAME = "calendar.txt"
 '''
 
 IMPORTANT NOTE: Do NOT change any of the function names or their signatures
@@ -371,11 +373,16 @@ def save_calendar(calendar):
             my_string += '\t'
         my_day = date + ":" + my_string.rstrip("\t.") + "\n"
         my_output += my_day
+    filename = "calendar.txt"
+    if os.path.exists(filename):
+        f = open(filename, "w")
+        f.write(my_output)
+        f.close()
+        return True
+    else:
+        return False
 
-    f = open("calendar.txt", "w")
-    f.write(my_output)
-    f.close()
-    return True
+
 
 
 def load_calendar():
@@ -403,8 +410,9 @@ def load_calendar():
         }
 
     '''
-
-    f = open("calendar.txt", "r")
+    if not os.path.exists(FILENAME):
+        open(FILENAME, "a").close
+    f = open(FILENAME, "r")
     calendar = {}
     if not f.read(1):
         # empty txt
