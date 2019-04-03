@@ -140,28 +140,26 @@ def command_add(date, start_time, end_time, title, calendar):
     """
 
     # YOUR CODE GOES HERE
-    if start_time > end_time or not 0 >= start_time >= 24 or not 0 >= end_time >= 24:
+    if start_time > end_time:
         return False
     if calendar:
         # if not empty
         if len(date.strip()) == 0:
             date = datetime.datetime.now().strftime("%Y-%m-%d")
-        if is_calendar_date(date) and 0 <= start_time <= 24 and 0 <= end_time <= 24\
-                and start_time <= end_time and len(title) != 0:
-            if date not in calendar:
-                # new date
-                calendar[date] = [{"start": start_time, "end": end_time, "title": title}]
-            else:
-                # exist date
-                for date in sorted(list(calendar.keys()), reverse=True):
+        if date not in calendar:
+            # new date
+            calendar[date] = [{"start": start_time, "end": end_time, "title": title}]
+        else:
+            # exist date
+            for dates in sorted(list(calendar.keys()), reverse=True):
+                if date == dates:
                     tasks = list(calendar[date])
                     tasks.append({"start": start_time, "end": end_time, "title": title})
                     tasks = sorted(tasks, key=lambda k: k['start'], reverse=False)
                     calendar[date] = tasks
-            save_calendar(calendar)
-            return True
-        else:
-            return False
+        save_calendar(calendar)
+        return True
+
     else:
         # if empty
         calendar[date] = [{"start": start_time, "end": end_time, "title": title}]
@@ -365,7 +363,6 @@ def save_calendar(calendar):
         tasks = list(calendar[date])
         my_string = ""
         for task in tasks:
-            #datetime.datetime(2018, 6, 1, task['start']).strftime("%H:%M")
             my_string += str(datetime.datetime(2018, 6, 1, task['start']).strftime("%H")) \
                          + "-" + str(datetime.datetime(2018, 6, 1, task['end']).strftime("%H")) \
                          + " " + task['title']
@@ -629,18 +626,26 @@ def parse_command(line):
     # YOUR CODE GOES HERE
     # pass
     result = []
-    line = line.lower()
     if len(line) == 0 or line == "help":
         result.append("help")
     else:
         result = line.split(" ")
 
-        if result[0] == "add":
-            if len(result) <= 4:
+        if result[0].lower() == "add":
+            if len(result) == 3:
                 result.clear()
-                result.append("help")
+                result.append("error")
                 result.append("add DATE START_TIME END_TIME DETAILS")
-
+            if len(result) == 4 :
+                if not is_natural_number(result[2]):
+                    result.clear()
+                    result.append("help")
+                    return result
+                else:
+                    result.clear()
+                    result.append("error")
+                    result.append("add DATE START_TIME END_TIME DETAILS")
+                    return result
             if len(result) > 4:
                 base = []
                 temp_str = ""
@@ -665,16 +670,16 @@ def parse_command(line):
                     result.append("error")
                     result.append("not a valid calendar date")
 
-        if len(result) == 2 and result[0] == "show":
+        if len(result) == 2 and result[0].lower() == "show":
             result.clear()
             result.append("error")
             result.append("show")
 
-        if len(result) == 3 and result[0] == "not":
+        if len(result) == 3 and result[0].lower() == "not":
             result.clear()
             result.append("help")
 
-        if result[0] == "delete" or result[0] == "del":
+        if result[0] == "delete" or result[0].lower() == "del":
             if len(result) == 1:
                 result.clear()
                 result.append("error")
