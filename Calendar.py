@@ -144,7 +144,7 @@ def command_add(date, start_time, end_time, title, calendar):
     # YOUR CODE GOES HERE
     if start_time > end_time:
         return False
-    if start_time not in range(0, 23) or end_time not in range(0, 23):
+    if start_time not in range(0, 25) or end_time not in range(0, 25):
         return False
     if calendar:
         # if not empty
@@ -196,11 +196,11 @@ def command_show(calendar):
     >>> command_add("2018-05-06", 19, 23, "Sid's birthday", calendar)
     True
     >>> command_show(calendar)
-    '\\n2018-05-06 : \\n    start : 19:00,\\n    end : 23:00,\\n    title : Sid's birthday\\n2018-02-10 : \\n    start : 12:00,\\n    end : 23:00,\\n    title : Change oil in blue car\\n\\n    start : 20:00,\\n    end : 22:00,\\n    title : dinner with Jane\\n2018-01-15 : \\n    start : 08:00,\\n    end : 09:00,\\n    title : lunch with sid\\n\\n    start : 11:00,\\n    end : 13:00,\\n    title : Eye doctor\\n2017-12-22 : \\n    start : 05:00,\\n    end : 08:00,\\n    title : Fix tree near front walkway\\n\\n    start : 13:00,\\n    end : 15:00,\\n    title : Get salad stuff'
+    "\\n2018-05-06 : \\n    start : 19:00,\\n    end : 23:00,\\n    title : Sid's birthday\\n2018-02-10 : \\n    start : 12:00,\\n    end : 23:00,\\n    title : Change oil in blue car\\n\\n    start : 20:00,\\n    end : 22:00,\\n    title : dinner with Jane\\n2018-01-15 : \\n    start : 08:00,\\n    end : 09:00,\\n    title : lunch with sid\\n\\n    start : 11:00,\\n    end : 13:00,\\n    title : Eye doctor\\n2017-12-22 : \\n    start : 05:00,\\n    end : 08:00,\\n    title : Fix tree near front walkway\\n\\n    start : 13:00,\\n    end : 15:00,\\n    title : Get salad stuff"
     """
     if calendar:
         str_return = ""
-        for dict_day in calendar:
+        for dict_day in sorted(list(calendar.keys()), reverse=True):
             list_tasks = calendar[dict_day]
             str_return += "\n" + dict_day + " : "
             if len(list_tasks) > 1:
@@ -531,8 +531,8 @@ def is_calendar_date(date):
 
     if not is_natural_number(year) \
             or not is_natural_number(month) \
-            or not is_natural_number(day) or int(month) > 12\
-            or int(day) > 31:
+            or not is_natural_number(day) or int(month) not in range(1, 13)\
+            or int(day) not in range(1, 32):
         return False
     else:
         return True
@@ -629,7 +629,7 @@ def parse_command(line):
     >>> parse_command("delete 2015-10-22 3,14")
     ['error', 'not a valid event start time']
     >>> parse_command("delete 2015-10-22 14")
-    ['delete', '2015-10-22', '14']
+    ['delete', '2015-10-22', 14]
     >>> parse_command("quit")
     ['quit']
 
@@ -643,8 +643,11 @@ def parse_command(line):
         result.append("help")
     else:
         result = line.split(" ")
-
         if result[0].lower() == "add":
+            if len(result) in range(1, 3):
+                result.clear()
+                result.append("error")
+                result.append("add DATE START_TIME END_TIME DETAILS")
             if len(result) == 3:
                 result.clear()
                 result.append("error")
