@@ -106,8 +106,12 @@ def user_interface():
     # Your code goes here
     while True:
         dict_calendar = calendar.load_calendar()
+        if dict_calendar:
+            print("calendar loaded")
+        else:
+            print("calendar is empty")
         answer = calendar.parse_command(input("input your command: ").strip())
-        print(answer)
+        # print(answer)
         if "quit" == answer[0].lower():
             break
         if "help" == answer[0].lower():
@@ -119,7 +123,7 @@ def user_interface():
             start_time = answer[2]
             end_time = answer[3]
             title = answer[4]
-            if calendar.command_add(str_date, start_time, end_time, title, dict_calendar):
+            if "True" == calendar.command_add(str_date, start_time, end_time, title, dict_calendar):
                 print("added")
             else:
                 print("no added")
@@ -128,10 +132,15 @@ def user_interface():
             str_date = answer[1]
             start_time = answer[2]
             result = calendar.command_delete(str_date, start_time, dict_calendar)
-            if result == "True":
+            if result:
                 print("deleted")
             else:
                 print(result)
+        if "save" == answer[0].lower():
+            if calendar.save_calendar(dict_calendar):
+                print("saved")
+            else:
+                print("not saved")
 
 
 if __name__ == "__main__":
